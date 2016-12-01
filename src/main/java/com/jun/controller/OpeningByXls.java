@@ -19,6 +19,8 @@ public class OpeningByXls extends ProgressUtil {
 	Map defDocMap = new HashMap();
 	Map productMap = new HashMap();
 	Map storeMap = new HashMap();
+	Map jarNumByStoreMap = new HashMap();
+	Map jarCubageByStoreMap = new HashMap();
 	String areaNo = "";
 	String buildingNo = "";
 	String storeNo = "";
@@ -41,14 +43,8 @@ public class OpeningByXls extends ProgressUtil {
 			productMap = initProductMap();
 			// 有坛号的酒记录
 			Map jarMap = new HashMap();
-			// 取得片区
-			if (xlsAryList != null && xlsAryList.size() > 0) {
-				getPk_area(getStrMapValue((Map) xlsAryList.get(0), "A"));
-			}
-			// 取得各库的总坛数
-			Map jarNumByStoreMap = initJarNumByStoreMap();
-			// 取得各库标准坛重
-			Map jarCubageByStoreMap = initJarCubageByStoreMap();
+			//记录片区MAP
+			Map areaMap = new HashMap();
 
 			// 主逻辑 先干掉整个05片区资料
 			// String sql = "update mtws_iquantity set dr=2 where dr=0 and
@@ -66,6 +62,11 @@ public class OpeningByXls extends ProgressUtil {
 				buildingNo = "";
 				storeNo = "";
 				String pk_area = getPk_area(getStrMapValue(map, "A"));
+				if(getStrMapValue(areaMap, areaNo).equals("")){
+					areaMap.put(areaNo, areaNo);
+					initJarNumByStoreMap();
+					initJarCubageByStoreMap();
+				}
 				String pk_store = getPk_store(getStrMapValue(map, "C"));
 				String pk_building = getPk_building(buildingNo);
 				String tubCode = getTubCode(getStrMapValue(map, "D"), getStrMapValue(map, "J"),
@@ -259,7 +260,7 @@ public class OpeningByXls extends ProgressUtil {
 
 	}
 
-	private Map initJarCubageByStoreMap() throws SQLException {
+	private void initJarCubageByStoreMap() throws SQLException {
 		// TODO 自动生成的方法存根
 		// TODO 自动生成的方法存根
 		// 取得05片区各库位总坛数
@@ -269,13 +270,11 @@ public class OpeningByXls extends ProgressUtil {
 				+ "%' and dr=0 " + " group by substr(code,1,9),jarcubage ";
 		Statement Stmt = conn.createStatement();
 		ResultSet rs = Stmt.executeQuery(jarNumStoreSql);
-		Map rstMap = new HashMap();
 		while (rs.next()) {
-			rstMap.put(rs.getString("store"), rs.getString("jarcubage"));
+			jarCubageByStoreMap.put(rs.getString("store"), rs.getString("jarcubage"));
 		}
 		Stmt.close();
 		rs.close();
-		return rstMap;
 	}
 
 	private Map initStoreMap() throws SQLException {
@@ -294,7 +293,7 @@ public class OpeningByXls extends ProgressUtil {
 		return rstMap;
 	}
 
-	private Map initJarNumByStoreMap() throws SQLException {
+	private void initJarNumByStoreMap() throws SQLException {
 		// TODO 自动生成的方法存根
 		// 取得05片区各库位总坛数
 		if (areaNo.equals(""))
@@ -303,13 +302,11 @@ public class OpeningByXls extends ProgressUtil {
 				+ areaNo + "%' and dr=0 " + " group by substr(code,1,9) ";
 		Statement Stmt = conn.createStatement();
 		ResultSet rs = Stmt.executeQuery(jarNumStoreSql);
-		Map rstMap = new HashMap();
 		while (rs.next()) {
-			rstMap.put(rs.getString("store"), rs.getString("jarnum"));
+			jarNumByStoreMap.put(rs.getString("store"), rs.getString("jarnum"));
 		}
 		Stmt.close();
 		rs.close();
-		return rstMap;
 	}
 
 	public int create(String sql) throws SQLException {
@@ -383,7 +380,13 @@ public class OpeningByXls extends ProgressUtil {
 		List jarList = new ArrayList();
 		// TODO 自动生成的方法存根
 		strMapValue = strMapValue.replaceAll("--", "-");
-		String[] strAry = strMapValue.split("\\.");
+		strMapValue = strMapValue.replaceAll("－－", "-");
+		strMapValue = strMapValue.replaceAll("－", "-");
+		strMapValue = strMapValue.replaceAll("、", "@");
+		strMapValue = strMapValue.replaceAll(",", "@");
+		strMapValue = strMapValue.replaceAll("，", "@");
+		strMapValue = strMapValue.replaceAll("\\.", "@");
+		String[] strAry = strMapValue.split("@");
 		for (int i = 0; i < strAry.length; i++) {
 			String strTmp = strAry[i];
 			if (strTmp.indexOf("-") > -1) {

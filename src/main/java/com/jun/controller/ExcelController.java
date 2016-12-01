@@ -39,6 +39,9 @@ public class ExcelController extends HttpServlet {
 	 */
 	public String fileName = "";
 	
+	/**
+	 * action
+	 */
 	public String action = "";
 
 	/**
