@@ -342,9 +342,9 @@ public class OpeningByXls extends ProgressUtil {
 			productName = "新酒——完工待检";
 		else if (pdType.equals("PG"))
 			productName = "盘勾酒——正常盘勾";
-		else if (pdType.equals("DG"))
+		else if (pdType.equals("GD"))
 			productName = "普通勾兑酒——完工待检";
-		else if (pdType.equals("DGTD"))
+		else if (pdType.equals("TD"))
 			productName = "坛底酒——勾兑坛底酒";
 		return getStrMapValue(productMap, productName);
 	}
