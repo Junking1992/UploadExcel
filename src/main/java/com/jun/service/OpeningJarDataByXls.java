@@ -1,4 +1,4 @@
-package com.jun.controller;
+package com.jun.service;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -216,7 +216,7 @@ public class OpeningJarDataByXls extends ProgressUtil {
 				addCount();
 			}
 
-			conn.commit();
+			//conn.commit();
 		} catch (Exception e) {
 			conn.rollback();
 			throw new Exception(e);

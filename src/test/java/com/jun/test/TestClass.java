@@ -1,4 +1,4 @@
-package com.jun.controller;
+package com.jun.test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

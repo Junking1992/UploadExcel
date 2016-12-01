@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.jun.service.OpeningByXls;
+import com.jun.service.OpeningJarDataByXls;
 
 public class ExcelController extends HttpServlet {
 	/**
@@ -123,9 +125,9 @@ public class ExcelController extends HttpServlet {
 			out.print("Msg：" + msg);
 		}else if(state){
 			if(open != null){
-				out.print("解析完成!用时：" + open.getTime());
+				out.print("上传完成!用时：" + open.getTime());
 			}else if(open2 != null){
-				out.print("解析完成!用时：" + open2.getTime());
+				out.print("上传完成!用时：" + open2.getTime());
 			}
 		}else{
 			if(open != null){

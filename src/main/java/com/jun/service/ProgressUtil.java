@@ -1,4 +1,4 @@
-package com.jun.controller;
+package com.jun.service;
 
 public class ProgressUtil {
 	

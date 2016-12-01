@@ -56,7 +56,7 @@
 		setTimeout(function() {
 			$.get("change", function(data, status) {
 				if (status == "success") {
-					if(data.startsWith("解析完成")){
+					if(data.startsWith("上传完成")){
 						$("#button").show();
 						$("#button2").show();
 						$("#now").html(data);

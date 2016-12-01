@@ -1,4 +1,4 @@
-package com.jun.controller;
+package com.jun.service;
 
 import java.math.BigDecimal;
 
@@ -250,7 +250,7 @@ public class OpeningByXls extends ProgressUtil {
 				// 进度增长
 				addCount();
 			}
-			conn.commit();
+			//conn.commit();
 		} catch (Exception e) {
 			conn.rollback();
 			throw new Exception("错误在：" + errorRowNum + "行." + e.toString());
