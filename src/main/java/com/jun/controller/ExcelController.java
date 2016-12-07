@@ -34,7 +34,7 @@ public class ExcelController extends HttpServlet {
 	/**
 	 * 从第几行开始读取数据(第一行为0)
 	 */
-	public int startRowNum = 1;
+	public int startRowNum = 2;
 	
 	/**
 	 * 文件名

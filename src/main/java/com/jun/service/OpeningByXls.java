@@ -38,7 +38,7 @@ public class OpeningByXls extends ProgressUtil {
 			// 取得年份轮次香型等级备注酒编码
 			defDocMap = initDefDocMap();
 			// 取得库号CODE
-			storeMap = initStoreMap();
+			//storeMap = initStoreMap();
 			// 取得产品名称
 			productMap = initProductMap();
 			// 有坛号的酒记录
@@ -61,16 +61,16 @@ public class OpeningByXls extends ProgressUtil {
 				areaNo = "";
 				buildingNo = "";
 				storeNo = "";
-				String pk_area = getPk_area(getStrMapValue(map, "A"));
+				Map<String, String> abstoreMape = getABStore(getStrMapValue(map, "C"));
+				String pk_area = getStrMapValue(abstoreMape, areaNo);
 				if(getStrMapValue(areaMap, areaNo).equals("")){
 					areaMap.put(areaNo, areaNo);
 					initJarNumByStoreMap();
 					initJarCubageByStoreMap();
 				}
-				String pk_store = getPk_store(getStrMapValue(map, "C"));
-				String pk_building = getPk_building(buildingNo);
-				String tubCode = getTubCode(getStrMapValue(map, "D"), getStrMapValue(map, "J"),
-						getStrMapValue(map, "E"), getStrMapValue(map, "F"));
+				String pk_store = getStrMapValue(abstoreMape, storeNo);
+				String pk_building = getStrMapValue(abstoreMape, buildingNo);
+				String tubCode = getTubCode(getStrMapValue(map, "D"), getStrMapValue(map, "J"), getStrMapValue(map, "E"), getStrMapValue(map, "F"));
 				String iyear = getIyear(getStrMapValue(map, "E"));
 				String oriDate = getStrMapValue(map, "F");
 				String inDate = getInDate(getStrMapValue(map, "G"), getStrMapValue(map, "H"), getStrMapValue(map, "I"));
@@ -162,9 +162,15 @@ public class OpeningByXls extends ProgressUtil {
 				areaNo = "";
 				buildingNo = "";
 				storeNo = "";
-				String pk_area = getPk_area(getStrMapValue(map, "A"));
-				String pk_building = getPk_building(getStrMapValue(map, "B"));
-				String pk_store = getPk_store(getStrMapValue(map, "C"));
+				Map<String, String> abstoreMape = getABStore(getStrMapValue(map, "C"));
+				String pk_area = getStrMapValue(abstoreMape, areaNo);
+				if(getStrMapValue(areaMap, areaNo).equals("")){
+					areaMap.put(areaNo, areaNo);
+					initJarNumByStoreMap();
+					initJarCubageByStoreMap();
+				}
+				String pk_store = getStrMapValue(abstoreMape, storeNo);
+				String pk_building = getStrMapValue(abstoreMape, buildingNo);
 				String tubCode = getTubCode(getStrMapValue(map, "D"), getStrMapValue(map, "J"),
 						getStrMapValue(map, "E"), getStrMapValue(map, "F"));
 				String iyear = getIyear(getStrMapValue(map, "E"));
@@ -250,7 +256,7 @@ public class OpeningByXls extends ProgressUtil {
 				// 进度增长
 				addCount();
 			}
-			//conn.commit();
+			conn.commit();
 		} catch (Exception e) {
 			conn.rollback();
 			throw new Exception("错误在：" + errorRowNum + "行." + e.toString());
@@ -293,6 +299,58 @@ public class OpeningByXls extends ProgressUtil {
 		return rstMap;
 	}
 
+	/**
+	 * 获取库号PK
+	 * 
+	 * @param storeStr
+	 * @return
+	 * @throws BusinessException
+	 */
+	private Map<String, String> getABStore(String storeStr) throws Exception {
+		storeStr = String.format("%04d", Integer.parseInt(storeStr.trim()));
+		if(storeStr.equals("")){
+			throw new Exception("库号[" + storeStr + "]格式化后不可为空");
+		}
+		String sql = "select c.pk_pubdoc,c.code,b.pk_pubdoc,b.code,a.pk_pubdoc,a.code from mtws_pubdoc a,mtws_pubdoc b,mtws_pubdoc c where   a.pid=b.pk_pubdoc and b.pid=c.pk_pubdoc and a.code like '_____"+storeStr+"' and a.name like '%库'";
+		Statement Stmt = conn.createStatement();
+		ResultSet rs = Stmt.executeQuery(sql);
+		Object[] objs = new Object[rs.getMetaData().getColumnCount()];
+		List<Object[]> result = new ArrayList<Object[]>();
+		while (rs.next()) {
+			for(int col=0; col<rs.getMetaData().getColumnCount();col++){
+				objs[col]=rs.getObject(col+1);
+			}
+			result.add(objs);
+		}
+		Stmt.close();
+		rs.close();
+		if (result.size()<1) {
+			throw new Exception("查无库号[" + storeStr + "]的片区冻库档案资料");
+		}
+		for(int i=0; i<6; i++){			
+			if(result.get(0)[i]==null || "".equals(result.get(0)[i])){
+				throw new Exception("库号[" + storeStr + "]的片区栋库资料["+result.get(0)[i]+"]不可为空");
+			}
+		}
+		Map<String, String> rstMap = new HashMap<String, String>();
+		areaNo = result.get(0)[1].toString();
+		buildingNo = result.get(0)[3].toString();
+		if(buildingNo.length()!=5){
+			throw new Exception("栋号编码[" + buildingNo + "]的长度不为5码");
+		}
+		buildingNo = buildingNo.substring(2, 5);
+		storeNo = result.get(0)[5].toString();
+		if(storeNo.length()!=9){
+			throw new Exception("库号编码[" + storeNo + "]的长度不为9码");
+		}
+		storeNo = storeNo.substring(5, 9);
+		rstMap.put(areaNo, result.get(0)[0].toString());
+		rstMap.put(buildingNo, result.get(0)[2].toString());
+		rstMap.put(storeNo, result.get(0)[4].toString());
+		
+		return rstMap;
+	}
+	
 	private void initJarNumByStoreMap() throws SQLException {
 		// TODO 自动生成的方法存根
 		// 取得05片区各库位总坛数

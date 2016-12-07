@@ -216,7 +216,7 @@ public class OpeningJarDataByXls extends ProgressUtil {
 				addCount();
 			}
 
-			//conn.commit();
+			conn.commit();
 		} catch (Exception e) {
 			conn.rollback();
 			throw new Exception(e);
