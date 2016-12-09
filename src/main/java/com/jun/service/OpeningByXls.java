@@ -110,6 +110,9 @@ public class OpeningByXls extends ProgressUtil {
 				BigDecimal jarCubage = getDecMapValue(jarCubageByStoreMap, areaNo + buildingNo + storeNo);
 				for (int j = 0; j < jarnum; j++) {
 					pk_jar = getPk_jar(jarList.get(j).toString());
+					if(pk_jar == null || "".equals(pk_jar)){
+						throw new Exception("坛号[" + jarList.get(j).toString() + "]基础档案里不存在!");
+					}
 					jarMap.put(jarList.get(j).toString(), pk_jar);
 					qtySum = qtySum.subtract(avgJar);
 					qtyJar = avgJar;
@@ -146,6 +149,7 @@ public class OpeningByXls extends ProgressUtil {
 							+ qtyJar + ",'1001A41000000000034A','" + jarState + "','" + statusCode + "'," + avgJar
 							+ ",'" + pdType + "','" + oriDate + "','" + inDate + "'," + "'" + exDate + "','" + grade
 							+ "',to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')," + "'0')";
+					
 					create(insertSql);
 				}
 				// 进度增长
