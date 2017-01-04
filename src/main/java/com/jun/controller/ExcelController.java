@@ -29,12 +29,12 @@ public class ExcelController extends HttpServlet {
 	/**
 	 * 将待转换Excel此路径
 	 */
-	public String sourcePath = "E:/ChengeExcel/";
+	public String sourcePath = "E:/UploadExcel/";
 
 	/**
 	 * 从第几行开始读取数据(第一行为0)
 	 */
-	public int startRowNum = 2;
+	public int startRowNum = 1;
 	
 	/**
 	 * 文件名
