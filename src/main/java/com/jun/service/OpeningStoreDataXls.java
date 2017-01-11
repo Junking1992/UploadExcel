@@ -33,7 +33,7 @@ public class OpeningStoreDataXls extends ProgressUtil {
 				addCount();
 			}
 			if (flag) {
-				conn.rollback();
+				conn.commit();
 			} else {
 				conn.rollback();
 				throw new Exception("上传错误，请查看错误Log!");
