@@ -24,6 +24,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.jun.service.OpeningByXls;
 import com.jun.service.OpeningJarDataByXls;
+import com.jun.service.OpeningStoreDataXls;
+import com.jun.service.ProgressUtil;
 
 public class ExcelController extends HttpServlet {
 	/**
@@ -72,15 +74,10 @@ public class ExcelController extends HttpServlet {
 	public String msg = "";
 	
 	/**
-	 * 核心解析逻辑
+	 * 公共类
 	 */
-	public OpeningByXls open;
+	public ProgressUtil main;
 	
-	/**
-	 * 核心解析逻辑2
-	 */
-	public OpeningJarDataByXls open2;
-
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, UnsupportedEncodingException {
@@ -99,11 +96,15 @@ public class ExcelController extends HttpServlet {
 				try {
 					List<Map<String, String>> data = parseExcel(sourcePath + fileName);
 					if("A".equals(action)){
-						open = new OpeningByXls();
-						open.initIquantityDate(data);
+						main = new OpeningByXls();
+						main.initIquantityDate(data);
 					}else if("B".equals(action)){
-						open2 = new OpeningJarDataByXls();
-						open2.initIquantityDate(data);
+						main = new OpeningJarDataByXls();
+						main.initIquantityDate(data);
+					}else if("C".equals(action)){
+						main = new OpeningStoreDataXls();
+						main.fileName = fileName;
+						main.initIquantityDate(data);
 					}
 					state = true;
 				} catch (Exception e) {
@@ -124,16 +125,12 @@ public class ExcelController extends HttpServlet {
 		if (flag) {
 			out.print("Msg：" + msg);
 		}else if(state){
-			if(open != null){
-				out.print("上传完成!用时：" + open.getTime());
-			}else if(open2 != null){
-				out.print("上传完成!用时：" + open2.getTime());
+			if(main != null){
+				out.print("上传完成!用时：" + main.getTime());
 			}
 		}else{
-			if(open != null){
-				out.print("当前进度：" + open.getProgress());
-			}else if(open2 != null){
-				out.print("当前进度：" + open2.getProgress());
+			if(main != null){
+				out.print("当前进度：" + main.getProgress());
 			}
 		}
 		out.close();

@@ -26,7 +26,7 @@ public class OpeningByXls extends ProgressUtil {
 	String storeNo = "";
 	String status = "";
 
-	public void initIquantityDate(List xlsAryList) throws Exception {
+	public void initIquantityDate(List<Map<String, String>> xlsAryList) throws Exception {
 		// 设置进度总数
 		setAllCount(xlsAryList.size());
 		try {

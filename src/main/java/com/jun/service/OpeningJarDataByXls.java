@@ -17,7 +17,7 @@ public class OpeningJarDataByXls extends ProgressUtil {
 	String buildingNo = "";
 	String storeNo = "";
 
-	public void initIquantityDate(List xlsAryList) throws Exception {
+	public void initIquantityDate(List<Map<String, String>> xlsAryList) throws Exception {
 		// 设置进度总数
 		setAllCount(xlsAryList.size());
 		try {

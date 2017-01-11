@@ -11,8 +11,9 @@
 	<div id="input" style="text-align: center; margin-top: 200px">
 		<h1>上传</h1>
 		<input type="file" accept=".xlsx,.xls" name="fileName" id="fileName" /> 
-		<input type="button" value="上传坛库存" id="button" onclick="parseExcel()" />
-		<input type="button" value="上传坛基本资料" id="button2" onclick="parseExcel2()" />
+		<input type="button" value="上传坛库存" id="button" name="button" onclick="parseExcel('A')" />
+		<input type="button" value="上传坛基本资料" id="button2" name="button" onclick="parseExcel('B')" />
+		<input type="button" value="上传功能分区" id="button3" name="button" onclick="parseExcel('C')" />
 	</div>
 	<div id="msg" style="text-align: center;">
 		<p id="now"/>
@@ -20,7 +21,7 @@
 </body>
 <script type="text/javascript">
 
-	function parseExcel() {
+	function parseExcel(attr) {
 		var filePath = $("#fileName").val();
 		var fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
 		if(fileName == ""){
@@ -29,40 +30,21 @@
 		}
 		$.post("change", {
 			fileName : fileName,
-			action : "A"
+			action : attr
 		});
-		$("#button").hide();
-		$("#button2").hide();
+		$("input[name='button']").hide();
 		progress();
 	}
 	
-	function parseExcel2() {
-		var filePath = $("#fileName").val();
-		var fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
-		if(fileName == ""){
-			alert("请选择Excel!");
-			return;
-		}
-		$.post("change", {
-			fileName : fileName,
-			action : "B"
-		});
-		$("#button").hide();
-		$("#button2").hide();
-		progress();
-	}
-
 	function progress() {
 		setTimeout(function() {
 			$.get("change", function(data, status) {
 				if (status == "success") {
 					if(data.startsWith("上传完成")){
-						$("#button").show();
-						$("#button2").show();
+						$("input[name='button']").show();
 						$("#now").html(data);
-					}else if(data.startsWith("错误")){
-						$("#button").show();
-						$("#button2").show();
+					}else if(data.startsWith("Msg")){
+						$("input[name='button']").show();
 						$("#now").html(data);
 					}else{
 						$("#now").html(data);
