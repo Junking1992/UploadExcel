@@ -32,10 +32,7 @@ public class OpeningStoreDataXls extends ProgressUtil {
 				// 进度增长
 				addCount();
 			}
-			if (flag) {
-				conn.commit();
-			} else {
-				conn.rollback();
+			if (!flag) {
 				throw new Exception("上传错误，请查看错误Log!");
 			}
 		} catch (Exception ex) {
@@ -79,6 +76,7 @@ public class OpeningStoreDataXls extends ProgressUtil {
 						+ "','0001A5100000000001KL','0001A410000000000954','0001A410000000000953','" + ts + "','-1','"
 						+ ts + "','" + ts + "',0)");
 			}
+			conn.commit();
 		} else {
 			flag = false;
 			logMessage("行号:" + row.get("RN") + "	库号" + storeHouse + "不存在.");
